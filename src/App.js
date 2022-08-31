@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef, useState } from "react";
+import { load } from "@tensorflow-models/toxicity";
 
-function App() {
+const threshold = 0.9;
+export default function App() {
+  const textarea = useRef();
+  const [toxicity, setToxicity] = useState("---");
+
+  const check = () => {
+    console.log(textarea.current.value);
+
+    load(threshold).then((model) => {
+      console.log("Model loaded...");
+      model.classify(textarea.current.value).then((predictions) => {
+        console.log(predictions);
+        const isToxic = predictions[6].results[0].match;
+        console.log(isToxic);
+        setToxicity(isToxic).then(() => {
+          console.log(toxicity);
+        });
+      });
+    });
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <textarea style={{ width: "50%" }} ref={textarea} />
+      <button onClick={check}>Submit</button>
+      <div>{toxicity}</div>
     </div>
   );
 }
-
-export default App;
