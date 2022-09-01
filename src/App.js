@@ -11,13 +11,13 @@ export default function App() {
 
     load(threshold).then((model) => {
       console.log("Model loaded...");
-      model.classify(textarea.current.value).then((predictions) => {
+      return model.classify(textarea.current.value).then((predictions) => {
         console.log(predictions);
         const isToxic = predictions[6].results[0].match;
         console.log(isToxic);
-        setToxicity(isToxic).then(() => {
-          console.log(toxicity);
-        });
+        setToxicity(isToxic);
+        console.log(toxicity);
+        return isToxic;
       });
     });
   };
